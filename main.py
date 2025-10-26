@@ -6,7 +6,7 @@ import ssl
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import os
-
+from fastapi.responses import JSONResponse
 SMTP_USER = os.getenv("EMAIL_USER")
 SMTP_PASS = os.getenv("EMAIL_PASS")
 SMTP_HOST = "smtp.gmail.com"
@@ -78,7 +78,13 @@ async def send_mail(
         if success:
             return {"detail": "Successfully sent message"}
         else:
-            return {"status_code"=500, "detail"="Error sending mail"}
+            return JSONResponse(
+    status_code=500,
+    content={"detail": "Error sending mail"}
+)
             
     except Exception as e:
-        return {"status_code"=500, "detail"="Error sending mail"}
+        return JSONResponse(
+    status_code=500,
+    content={"detail": "Error sending mail"}
+)
