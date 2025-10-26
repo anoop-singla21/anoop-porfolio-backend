@@ -75,7 +75,7 @@ def send_email_resend(name: str, email: str, subject: str, message: str, ip: str
         """
         
         r = resend.Emails.send({
-            "from": "anoopsingla71@gmail.com",
+            "from": "onboarding@resend.dev",
             "to": ["anoopsingla71@gmail.com"],
             "subject": f"Portfolio Contact: {subject}",
             "html": html_body,
