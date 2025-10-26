@@ -81,4 +81,4 @@ async def send_mail(
             return {"status_code"=500, "detail"="Error sending mail"}
             
     except Exception as e:
-        return {"status_code"=500, "detail"="Error sending mail")
+        return {"status_code"=500, "detail"="Error sending mail"}
