@@ -5,9 +5,9 @@ import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import os
-from dotenv import load_dotenv
+#from dotenv import load_dotenv
 
-load_dotenv()  # Load from .env
+#load_dotenv()  # Load from .env
 SMTP_USER = os.getenv("EMAIL_USER")
 SMTP_PASS = os.getenv("EMAIL_PASS")
 SMTP_HOST="smtp.gmail.com"
