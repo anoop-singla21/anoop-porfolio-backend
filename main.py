@@ -79,7 +79,8 @@ def send_email_resend(name: str, email: str, subject: str, message: str, ip: str
             "to": ["anoopsingla71@gmail.com"],
             "subject": f"Portfolio Contact: {subject}",
             "html": html_body,
-            "text": plain_text
+            "text": plain_text,
+            "reply_to":email
         })
         
         print("✅ Email sent successfully via Resend")
