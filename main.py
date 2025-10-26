@@ -84,6 +84,7 @@ async def send_mail(
 )
             
     except Exception as e:
+        print(e)
         return JSONResponse(
     status_code=500,
     content={"detail": "Error sending mail"}
