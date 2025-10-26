@@ -32,3 +32,4 @@ urllib3==2.2.1
 uvicorn==0.34.2
 python-dotenv
 python-multipart
+resend
