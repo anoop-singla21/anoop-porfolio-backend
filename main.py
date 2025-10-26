@@ -2,6 +2,7 @@
 from fastapi import FastAPI, Form, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 import smtplib
+import ssl
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import os
@@ -9,7 +10,7 @@ import os
 SMTP_USER = os.getenv("EMAIL_USER")
 SMTP_PASS = os.getenv("EMAIL_PASS")
 SMTP_HOST = "smtp.gmail.com"
-SMTP_PORT = 587
+SMTP_PORT = 465  # Changed to 465 for SSL
 
 def send_email(subject: str, body: str):
     msg = MIMEMultipart()
@@ -19,11 +20,14 @@ def send_email(subject: str, body: str):
     msg.attach(MIMEText(body, 'plain'))
 
     try:
-        server = smtplib.SMTP(SMTP_HOST, SMTP_PORT)
-        server.starttls()
-        server.login(SMTP_USER, SMTP_PASS)
-        server.send_message(msg)
-        server.quit()
+        # Create SSL context
+        context = ssl.create_default_context()
+        
+        # Use SMTP_SSL instead of regular SMTP
+        with smtplib.SMTP_SSL(SMTP_HOST, SMTP_PORT, context=context) as server:
+            server.login(SMTP_USER, SMTP_PASS)
+            server.send_message(msg)
+        
         print("✅ Email sent successfully")
         return True
     except Exception as e:
@@ -34,7 +38,7 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://anoop-singla21.github.io"],  # Fixed: removed /anoop-portfolio
+    allow_origins=["https://anoop-singla21.github.io"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -53,9 +57,21 @@ async def send_mail(
     message: str = Form(...)
 ):
     try:
-        subject_email = f"Email from website from {name} : {subject}"
-        # Fixed: Use single quotes inside f-string
-        body = f"Email from website from {name} : email {email}: {message}  ip_address:{request.client.host} user_agent:{request.headers.get('User-Agent')}"
+        subject_email = f"Portfolio Contact: {subject} from {name}"
+        body = f"""
+        New contact form submission:
+        
+        Name: {name}
+        Email: {email}
+        Subject: {subject}
+        
+        Message:
+        {message}
+        
+        Technical Info:
+        IP: {request.client.host}
+        User Agent: {request.headers.get('User-Agent')}
+        """
         
         success = send_email(subject_email, body)
         
