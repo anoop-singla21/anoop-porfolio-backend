@@ -78,7 +78,7 @@ async def send_mail(
         if success:
             return {"detail": "Successfully sent message"}
         else:
-            raise HTTPException(status_code=500, detail="Error sending mail")
+            return {"status_code"=500, "detail"="Error sending mail"}
             
     except Exception as e:
-        raise HTTPException(status_code=500, detail="Error sending mail")
+        return {"status_code"=500, "detail"="Error sending mail")
