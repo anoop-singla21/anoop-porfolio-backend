@@ -1,13 +1,34 @@
 # main.py
-from fastapi import FastAPI, Form, HTTPException, status
+from fastapi import FastAPI, Form, HTTPException, status,Request
 from fastapi.middleware.cors import CORSMiddleware
 import smtplib
-import ssl
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 import os
-from email.message import EmailMessage
 from dotenv import load_dotenv
 
-load_dotenv()
+load_dotenv()  # Load from .env
+SMTP_USER = os.getenv("EMAIL_USER")
+SMTP_PASS = os.getenv("EMAIL_PASS")
+SMTP_HOST="smtp.gmail.com"
+SMTP_PORT=587
+def send_email(subject: str, body: str):
+    msg = MIMEMultipart()
+    msg['From'] = SMTP_USER
+    msg['To'] = "anoopsingla21@gmail.com"
+    msg['Subject'] = subject
+
+    msg.attach(MIMEText(body, 'plain'))
+
+    try:
+        server = smtplib.SMTP(SMTP_HOST, SMTP_PORT)
+        server.starttls()
+        server.login(SMTP_USER, SMTP_PASS)
+        server.send_message(msg)
+        server.quit()
+        print("✅ Email sent successfully")
+    except Exception as e:
+        print("❌ Failed to send email:", str(e))
 
 app = FastAPI()
 
@@ -24,7 +45,7 @@ async def root():
     return {"message": "Portfolio API is running"}
 
 @app.post("/send-mail")
-async def send_mail(
+async def send_mail(request:Request,
     name: str = Form(...),
     email: str = Form(...),
     subject: str = Form(...),
@@ -32,21 +53,9 @@ async def send_mail(
 ):
     # Your existing email sending code here
     try:
-        sender_email = os.getenv("EMAIL_USER")
-        sender_pass = os.getenv("EMAIL_PASS")
-        receiver_mail = "anoopsingla21@gmail.com"
-        
-        msg = EmailMessage()
-        msg["Subject"] = f"New Message: {subject}"
-        msg["From"] = email
-        msg["To"] = receiver_mail
-        msg.set_content(f"From: {name} <{email}>\n\n{message}")
-        
-        context = ssl.create_default_context()
-        with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
-            server.login(sender_email, sender_pass)
-            server.send_message(msg)
-        
+        subject_email = f"Email from website from {name} : {subject}"
+        body = f"Email on websit from {name} : email {email}: {message}  ip_address:{request.client.host} user_agent:{request.headers.get("User-Agent")}"
+        send_email(subject_email,body)
         return {"detail": "Successfully sent message"}
     except Exception as e:
         raise HTTPException(status_code=500, detail="Error sending mail")
