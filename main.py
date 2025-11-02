@@ -94,7 +94,7 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://anoop-singla21.github.io"],
+    allow_origins=["https://anoopsingla.fun"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
