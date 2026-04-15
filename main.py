@@ -56,6 +56,7 @@ def send_email_resend(name: str, email: str, subject: str, message: str, ip: str
     """Send email using Resend"""
     try:
         html_body = create_html_body(name, email, subject, message, ip, user_agent)
+
         
         # Create plain text version as fallback
         plain_text = f"""
